@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  nginx.conf: |-
+    user  nginx;
+    worker_processes  10;
+    
+    error_log /dev/stdout warn;
+    pid       /var/run/nginx.pid;
+    
+    events {
+      worker_connections  10240;
+    }
+    
+    http {
+        include         /etc/nginx/mime.types;
+        default_type    application/octet-stream;
+
+        server {
+            listen       8080;
+            server_name  localhost;
+    
+            location /stub_status {
+                allow 127.0.0.1;
+                deny all;
+                stub_status on;
+            }
+    
+            location / {
+                return 200 'NGINX is alive';
+            }
+        }
+    }
+    
